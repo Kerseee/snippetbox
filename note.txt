@@ -1,0 +1,4 @@
+本專案有主要三個 directory:
+- cmd: application-specific code
+- pkg: non-application-specific code
+- ui: user-interface assets (no .go in here)
