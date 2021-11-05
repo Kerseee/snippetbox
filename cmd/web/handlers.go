@@ -3,7 +3,6 @@ package main
 import (
 	"errors"
 	"fmt"
-	// "html/template"
 	"net/http"
 	"path/filepath"
 	"strconv"
@@ -64,32 +63,10 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	for _, snippet := range s {
-		fmt.Fprintf(w, "%v\n", snippet)
-	}
-
-	// // Initial the path of files that we want toe parse. 
-	// // Note that home.page must be the FIRST file in the slice. Otherwise nothing will be shown.
-	// files := []string{
-	// 	"./ui/html/home.page.tmpl",
-	// 	"./ui/html/base.layout.tmpl",
-	// 	"./ui/html/footer.partial.tmpl",
-	// }
-	
-	// // Read the template html files. Log errors and return if there is any error.
-	// // In here we use template.ParseFiles invoke only "base" template in base.layout.tmpl.
-	// // And then templates "title" and "main" will be invoked by template "base".
-	// ts, err := template.ParseFiles(files...)
-	// if err != nil {
-	// 	app.serverError(w, err)
-	// 	return
-	// }
-	
-	// // Use template to write response body. Log errors if there is any.
-	// err = ts.Execute(w, nil)
-	// if err != nil {
-	// 	app.serverError(w, err)
-	// }
+	// Render the html with template and data.
+	app.render(w, r, "home.page.tmpl", &templateData{
+		Snippets: s,
+	})
 }
 
 // showSnippet is a handler function which shows a specific snippet.
@@ -113,11 +90,13 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// Write the id to the http.ResponseWriter
-	fmt.Fprintf(w, "%v", s)
+	// Render the html with template and data.
+	app.render(w, r, "show.page.tmpl", &templateData{
+		Snippet: s,
+	})
 }
 
-// showSnippet is a handler function which creates a specific snippet.
+// showSnippet is a handler function which creates a specific snippet and store it into DB.
 func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 	// Check if the request is using "POST". If not then response 405.
 	if r.Method != http.MethodPost {

@@ -1,9 +1,11 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"net/http"
 	"runtime/debug"
+	"time"
 )
 
 // serveError writes error message and stack trace to the errorLog,
@@ -23,4 +25,36 @@ func (app *application) clientError(w http.ResponseWriter, status int) {
 // notFound sends a 404 not found error to the user.
 func (app *application) notFound(w http.ResponseWriter) {
 	app.clientError(w, http.StatusNotFound)
+}
+
+// addDefaultData adds the current year to the CurrentYear field, 
+// and return the pointerof the struct templateData.
+func (app *application) addDefaultData(td *templateData, r *http.Request) *templateData {
+	if td == nil {
+		td = &templateData{}
+	}
+	td.CurrentYear = time.Now().Year()
+	return td
+}
+
+// render renders the html with given name of page and data.
+func (app *application) render(w http.ResponseWriter, r *http.Request, name string, td *templateData) {
+	// Retrieve the template set from the cache based on the page name.
+	ts, ok := app.templateCache[name]
+	if !ok {
+		app.serverError(w, fmt.Errorf("The template %s is not exist.", name))
+		return
+	}
+
+	// Write the template to the buffer first, instead of straight ro the http writer.
+	// This way, we can handle the writing error more effectively
+	buf := new(bytes.Buffer)
+	err := ts.Execute(buf, app.addDefaultData(td, r))
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	// If it is ok, then write the template to http writer.
+	buf.WriteTo(w)
 }

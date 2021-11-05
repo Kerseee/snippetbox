@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"flag"
+	"html/template"
 	"log"
 	"net/http"
 	"os"
@@ -14,9 +15,10 @@ import (
 
 // application holds all the application-wide dependencies.
 type application struct {
-	errorLog	*log.Logger
-	infoLog		*log.Logger
-	snippets	*mysql.SnippetModel	// Our snippets model connected to the database.
+	errorLog		*log.Logger
+	infoLog			*log.Logger
+	snippets		*mysql.SnippetModel	// Our snippets model connected to the database.
+	templateCache 	map[string]*template.Template	// template caches
 }
 
 func main(){
@@ -39,16 +41,23 @@ func main(){
 		errorLog.Fatal(err)
 	}
 	defer db.Close()
+
+	// Initialize a new template cache.
+	templateCache, err := newTemplateCache("./ui/html/")
+	if err != nil {
+		errorLog.Fatal(err)
+	}
 	
-	// Initial an application to hold all the dependencies and routes (mux).
+	// Initialize an application to hold all the dependencies and routes (mux).
 	app := &application{
 		errorLog: errorLog,
 		infoLog: infoLog,
 		snippets: &mysql.SnippetModel{DB: db},
+		templateCache: templateCache,
 	}
 	
 	// Running the HTTP server.
-	// Initial the http server with addr, errorLog and handler defined above.
+	// Initialize the http server with addr, errorLog and handler defined above.
 	// Otherwise the http default server will use stderr to output error.
 	srv := &http.Server{
 		Addr: *addr,

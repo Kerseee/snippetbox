@@ -48,7 +48,7 @@ func (m *SnippetModel) Get(id int) (*models.Snippet, error) {
 	// Use row.Scan to copy the value in the row into s. 
 	// The number of arguments must be exactly the same as the number of columns
 	// returned by DB.QueryRow.
-	err := row.Scan(&s.ID, &s.Title, &s.Content, &s.Create, &s.Expires)
+	err := row.Scan(&s.ID, &s.Title, &s.Content, &s.Created, &s.Expires)
 	if err != nil {
 		// Check if the error is the sql.ErrNoRows error.
 		if errors.Is(err, sql.ErrNoRows) {
@@ -81,7 +81,7 @@ func (m *SnippetModel) Latest() ([]*models.Snippet, error) {
 	for rows.Next() {
 		s := &models.Snippet{}
 		// This Scan scan the current row in this iteration.
-		err = rows.Scan(&s.ID, &s.Title, &s.Content, &s.Create, &s.Expires)
+		err = rows.Scan(&s.ID, &s.Title, &s.Content, &s.Created, &s.Expires)
 		if err != nil {
 			return nil, err
 		}
