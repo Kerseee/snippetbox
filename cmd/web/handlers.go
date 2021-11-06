@@ -49,13 +49,6 @@ func (nfs neuteredFileSystem) Open(path string) (http.File, error) {
 // home is a handler function which writes a byte slice containing
 // "Hello from Snippetbox" as the response body.
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
-	// Send 404 response to client through http.NotFound if the path
-	// does not exactly match "/".
-	if r.URL.Path != "/" {
-		app.notFound(w)
-		return
-	}
-
 	// Show the latest snippets in the database.
 	s, err := app.snippets.Latest()
 	if err != nil {
@@ -72,7 +65,7 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 // showSnippet is a handler function which shows a specific snippet.
 func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 	// Extract the id in URL and parse to int.
-	id, err := strconv.Atoi(r.URL.Query().Get("id"))
+	id, err := strconv.Atoi(r.URL.Query().Get(":id"))
 	// If id is wrong or invalid then response 404.
 	if err != nil || id < 1 {
 		app.notFound(w)
@@ -96,21 +89,13 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// createSnippetForm create the form for client to create a snippet.
+func (app *application) createSnippetForm(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("Create a new snippet..."))
+}
+
 // showSnippet is a handler function which creates a specific snippet and store it into DB.
 func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
-	// Check if the request is using "POST". If not then response 405.
-	if r.Method != http.MethodPost {
-		// Customize the headers. Tell client that "POST" is allowed.
-		// This set the header map.
-		w.Header().Set("Allow", http.MethodPost)
-
-		// http.Error call w.WriteHeader() and w.Write() behind-of-scene.
-		// This function is much used in practice than 
-		// calling w.WriteHeader() and w.Write() directly.
-		app.clientError(w, http.StatusMethodNotAllowed)
-		return
-	}
-
 	// Some dummy data
 	title := "0 snail"
 	content := "0 snail\nClimb Mount Fuji,\nBut slowly, slowly!\n\n- Kobayashi Issa"
@@ -120,7 +105,8 @@ func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 	id, err := app.snippets.Insert(title, content, expires)
 	if err != nil {
 		app.serverError(w, err)
+		return
 	}
 	
-	http.Redirect(w, r, fmt.Sprintf("/snippet?id=%d", id), http.StatusSeeOther)
+	http.Redirect(w, r, fmt.Sprintf("/snippet/%d", id), http.StatusSeeOther)
 }
