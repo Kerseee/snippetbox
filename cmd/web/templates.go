@@ -5,12 +5,14 @@ import (
 	"path/filepath"
 	"time"
 
+	"kerseeeHuang.com/snippetbox/pkg/forms"
 	"kerseeeHuang.com/snippetbox/pkg/models"
 )
 
 // templateData store snippets that we want to render with html templates.
 type templateData struct {
 	CurrentYear	int
+	Form 		*forms.Form
 	Snippet 	*models.Snippet
 	Snippets 	[]*models.Snippet
 }

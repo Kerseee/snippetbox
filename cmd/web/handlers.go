@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	"strconv"
 
+
+	"kerseeeHuang.com/snippetbox/pkg/forms"
 	"kerseeeHuang.com/snippetbox/pkg/models"
 )
 
@@ -91,18 +93,34 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 
 // createSnippetForm create the form for client to create a snippet.
 func (app *application) createSnippetForm(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Create a new snippet..."))
+	// Render a blank form.
+	app.render(w, r, "create.page.tmpl", &templateData{
+		Form: forms.New(nil),
+	})
 }
 
 // showSnippet is a handler function which creates a specific snippet and store it into DB.
 func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
-	// Some dummy data
-	title := "0 snail"
-	content := "0 snail\nClimb Mount Fuji,\nBut slowly, slowly!\n\n- Kobayashi Issa"
-	expires := "7"
+	// Parse the from in the request and store it in r.PostForm.
+	err := r.ParseForm()
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+	}
 
-	// Pass the data to the SnippetModel.Insert() and get back the id of the new record.
-	id, err := app.snippets.Insert(title, content, expires)
+	// Retrieve data in the r.PostForm and validate the data
+	form := forms.New(r.PostForm)
+	form.Required("title", "content", "expires")
+	form.MaxLength("title", 100)
+	form.PermittedValues("expires", "365", "7", "1")
+
+	// Redisplay the template and filled-in data if the form is not valid.
+	if !form.Valid() {
+		app.render(w, r, "create.page.tmpl", &templateData{Form: form})
+		return
+	}
+
+	// Create a new snippet in db and get back the id of the new record.
+	id, err := app.snippets.Insert(form.Get("title"), form.Get("content"), form.Get("expires"))
 	if err != nil {
 		app.serverError(w, err)
 		return
