@@ -28,12 +28,14 @@ func (app *application) notFound(w http.ResponseWriter) {
 }
 
 // addDefaultData adds the current year to the CurrentYear field, 
-// and return the pointerof the struct templateData.
+// and return the pointer of the struct templateData.
 func (app *application) addDefaultData(td *templateData, r *http.Request) *templateData {
 	if td == nil {
 		td = &templateData{}
 	}
 	td.CurrentYear = time.Now().Year()
+
+	td.Flash = app.session.PopString(r, "flash")
 	return td
 }
 

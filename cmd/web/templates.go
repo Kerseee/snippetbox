@@ -12,6 +12,7 @@ import (
 // templateData store snippets that we want to render with html templates.
 type templateData struct {
 	CurrentYear	int
+	Flash 		string
 	Form 		*forms.Form
 	Snippet 	*models.Snippet
 	Snippets 	[]*models.Snippet
