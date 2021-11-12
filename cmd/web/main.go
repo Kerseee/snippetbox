@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/tls"
 	"database/sql"
 	"flag"
 	"html/template"
@@ -65,6 +66,12 @@ func main(){
 		snippets: &mysql.SnippetModel{DB: db},
 		templateCache: templateCache,
 	}
+
+	// Config the curve preferences in TLS.
+	tlsConfig := &tls.Config{
+		PreferServerCipherSuites: true,
+		CurvePreferences: []tls.CurveID{tls.X25519, tls.CurveP256},
+	}
 	
 	// Running the HTTP server.
 	// Initialize the http server with addr, errorLog and handler defined above.
@@ -73,11 +80,13 @@ func main(){
 		Addr: *addr,
 		ErrorLog: errorLog,
 		Handler: app.routes(),	// Create a mux from app.routes()
+		TLSConfig: tlsConfig,
 	}
 	// Use the http.ListenAndServe() function to start a new web server.
 	// Call Fatal if there is any error.
 	infoLog.Printf("Starting server on %s\n", *addr)
-	err = srv.ListenAndServe()
+	// Open a HTTPS server.
+	err = srv.ListenAndServeTLS("./tls/cert.pem", "./tls/key.pem")
 	errorLog.Fatal(err)
 }
 
