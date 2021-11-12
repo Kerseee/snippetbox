@@ -81,6 +81,9 @@ func main(){
 		ErrorLog: errorLog,
 		Handler: app.routes(),	// Create a mux from app.routes()
 		TLSConfig: tlsConfig,
+		IdleTimeout: time.Minute,
+		ReadTimeout: 5 * time.Second,
+		WriteTimeout: 10 * time.Second,
 	}
 	// Use the http.ListenAndServe() function to start a new web server.
 	// Call Fatal if there is any error.
