@@ -23,6 +23,7 @@ type application struct {
 	session 		*sessions.Session
 	snippets		*mysql.SnippetModel	// Our snippets model connected to the database.
 	templateCache 	map[string]*template.Template	// template caches
+	users			*mysql.UserModel
 }
 
 func main(){
@@ -60,17 +61,18 @@ func main(){
 	
 	// Initialize an application to hold all the dependencies and routes (mux).
 	app := &application{
-		errorLog: errorLog,
-		infoLog: infoLog,
-		session: session,
-		snippets: &mysql.SnippetModel{DB: db},
-		templateCache: templateCache,
+		errorLog: 		errorLog,
+		infoLog: 		infoLog,
+		session: 		session,
+		snippets: 		&mysql.SnippetModel{DB: db},
+		templateCache: 	templateCache,
+		users: 			&mysql.UserModel{DB: db},
 	}
 
 	// Config the curve preferences in TLS.
 	tlsConfig := &tls.Config{
-		PreferServerCipherSuites: true,
-		CurvePreferences: []tls.CurveID{tls.X25519, tls.CurveP256},
+		PreferServerCipherSuites: 	true,
+		CurvePreferences: 			[]tls.CurveID{tls.X25519, tls.CurveP256},
 	}
 	
 	// Running the HTTP server.
@@ -78,12 +80,12 @@ func main(){
 	// Otherwise the http default server will use stderr to output error.
 	srv := &http.Server{
 		Addr: *addr,
-		ErrorLog: errorLog,
-		Handler: app.routes(),	// Create a mux from app.routes()
-		TLSConfig: tlsConfig,
-		IdleTimeout: time.Minute,
-		ReadTimeout: 5 * time.Second,
-		WriteTimeout: 10 * time.Second,
+		ErrorLog: 		errorLog,
+		Handler: 		app.routes(),	// Create a mux from app.routes()
+		TLSConfig: 		tlsConfig,
+		IdleTimeout: 	time.Minute,
+		ReadTimeout: 	5 * time.Second,
+		WriteTimeout: 	10 * time.Second,
 	}
 	// Use the http.ListenAndServe() function to start a new web server.
 	// Call Fatal if there is any error.
