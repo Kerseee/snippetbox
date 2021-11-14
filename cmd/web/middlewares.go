@@ -24,6 +24,7 @@ func (app *application) logRequest(next http.Handler) http.Handler {
 	})
 }
 
+// recoverPanic is a middleware that recover the handler from panic
 func (app *application) recoverPanic(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){
 		// Recover from the panic if there is any
@@ -36,6 +37,23 @@ func (app *application) recoverPanic(next http.Handler) http.Handler {
 			}
 		}()
 
+		next.ServeHTTP(w, r)
+	})
+}
+
+// requireAuthentication is a middleware that redirects unauthenticated user to the login page.
+func (app *application) requireAuthentication(next http.Handler) http.Handler {
+	return http.HandlerFunc(func (w http.ResponseWriter, r *http.Request){
+		// Redirect unauthenticated user to the login page and return from the middleware chain.
+		if !app.isAuthenticated(r) {
+			http.Redirect(w, r, "/", http.StatusSeeOther)
+			return
+		}
+
+		// Prevent user's browser from caching pages that require authentication. 
+		w.Header().Add("Cache-Control", "no-store")
+
+		// Move on the next handler
 		next.ServeHTTP(w, r)
 	})
 }

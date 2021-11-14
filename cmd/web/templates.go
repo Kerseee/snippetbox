@@ -11,11 +11,12 @@ import (
 
 // templateData store snippets that we want to render with html templates.
 type templateData struct {
-	CurrentYear	int
-	Flash 		string
-	Form 		*forms.Form
-	Snippet 	*models.Snippet
-	Snippets 	[]*models.Snippet
+	CurrentYear		int
+	Flash 			string
+	Form 			*forms.Form
+	IsAuthenticated	bool
+	Snippet 		*models.Snippet
+	Snippets 		[]*models.Snippet
 }
 
 // humanDate return a nicely formatted string of time.
