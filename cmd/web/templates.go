@@ -11,6 +11,7 @@ import (
 
 // templateData store snippets that we want to render with html templates.
 type templateData struct {
+	CSRFToken 		string
 	CurrentYear		int
 	Flash 			string
 	Form 			*forms.Form
