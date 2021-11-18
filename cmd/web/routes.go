@@ -13,7 +13,7 @@ func (app *application) routes() http.Handler {
 	standardMiddleware := alice.New(app.recoverPanic, app.logRequest, secureHeaders)
 
 	// dynamicMiddleware is a chan that contains all middleware specific to dynamic application routes
-	dynamicMiddleware := alice.New(app.session.Enable, noSurf)
+	dynamicMiddleware := alice.New(app.session.Enable, noSurf, app.authenticate)
 
 	// authenticatedMiddleware is a chan for pages needed user authentication
 	authenticatedMiddleware := dynamicMiddleware.Append(app.requireAuthentication)

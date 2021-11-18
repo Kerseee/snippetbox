@@ -1,8 +1,12 @@
 package main
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"net/http"
+
+	"kerseeeHuang.com/snippetbox/pkg/models"
 
 	"github.com/justinas/nosurf"
 )
@@ -70,4 +74,42 @@ func noSurf(next http.Handler) http.Handler {
 	})
 	
 	return csrfHandler
+}
+
+// authenticate is a middleware that create a copy of the request context with 
+// authenticated key and pass the copy to the next handler if the current user
+// is authenticated and active. Otherwise directly move on to the next handler.
+func (app *application) authenticate(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){
+		// Check if current user is authenticated.
+		exist := app.session.Exists(r, "authenticatedUserID")
+		if !exist {
+			next.ServeHTTP(w, r)
+			return
+		}
+
+		// Check if this user exists in DB.
+		user, err := app.users.Get(app.session.GetInt(r, "authenticatedUserID"))
+		if errors.Is(err, models.ErrNoRecord) {
+			app.session.Remove(r, "authenticatedUserID")
+			next.ServeHTTP(w, r)
+			return
+		}
+		if err != nil {
+			app.serverError(w, err)
+			return
+		}
+
+		// Check if this user is deactive.
+		if !user.Active {
+			app.session.Remove(r, "authenticatedUserID")
+			next.ServeHTTP(w, r)
+			return
+		}
+
+		// Mark the request from this user so that the request indicates it is from an 
+		// authenticated and active user.
+		ctx := context.WithValue(r.Context(), contextKeyIsAuthenticated, true)
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
 }
