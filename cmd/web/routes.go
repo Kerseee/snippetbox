@@ -34,6 +34,9 @@ func (app *application) routes() http.Handler {
 	mux.Post("/user/login", dynamicMiddleware.ThenFunc(app.loginUser))
 	mux.Post("/user/logout", authenticatedMiddleware.ThenFunc(app.logoutUser))
 
+	// Add ping just for test.
+	mux.Get("/ping", http.HandlerFunc(ping))
+
 	// fileServer serve the static files in ./ut/static directory.
 	fileServer := http.FileServer(neuteredFileSystem{http.Dir("./ui/static/")})
 	// Handle all the request with /static/ prefix. Because fileServer only serve

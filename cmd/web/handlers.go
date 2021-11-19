@@ -46,7 +46,10 @@ func (nfs neuteredFileSystem) Open(path string) (http.File, error) {
 	return f, nil
 }
 
-
+// ping writes "OK" to http.Responsewriter.
+func ping(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("OK"))
+}
 
 // home is a handler function which writes a byte slice containing
 // "Hello from Snippetbox" as the response body.
@@ -83,6 +86,7 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 		} else {
 			app.serverError(w, err)
 		}
+		return
 	}
 
 	// Render the html with template and data.
