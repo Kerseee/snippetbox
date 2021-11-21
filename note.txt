@@ -2,3 +2,5 @@
 - cmd: application-specific code
 - pkg: non-application-specific code
 - ui: user-interface assets (no .go in here)
+    - 在 ui.go 裡面的 embed 讓我們的網站在 server 這些 static files 
+      不是在 runtime 時讀取檔案硬碟裡面的檔案，而是從 embedded file system 裡面讀   
