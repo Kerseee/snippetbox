@@ -32,7 +32,7 @@ func extractCSRFToken(t *testing.T, body []byte) string {
 // newTestApplication return an application struct for test.
 func newTestApplication(t *testing.T) *application {
 	// Create a test templateCache.
-	templateCache, err := newTemplateCache("./../../ui/html")
+	templateCache, err := newTemplateCache()
 	if err != nil {
 		t.Fatal(err)
 	}

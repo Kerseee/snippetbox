@@ -3,6 +3,8 @@ package main
 import (
 	"net/http"
 
+	"kerseeeHuang.com/snippetbox/ui"
+
 	"github.com/bmizerany/pat"
 	"github.com/justinas/alice"
 )	
@@ -37,12 +39,11 @@ func (app *application) routes() http.Handler {
 	// Add ping just for test.
 	mux.Get("/ping", http.HandlerFunc(ping))
 
-	// fileServer serve the static files in ./ut/static directory.
-	fileServer := http.FileServer(neuteredFileSystem{http.Dir("./ui/static/")})
-	// Handle all the request with /static/ prefix. Because fileServer only serve
-	// the files under /static/, so we need to strip the "/static" in the request
-	// so that the fileServer can find the right path.
-	mux.Get("/static/", http.StripPrefix("/static", fileServer))
+	// fileServer serve the static files in ./ut/static directory from the ui.Files
+	// embedded file system.
+	fileServer := http.FileServer(neuteredFileSystem{http.FS(ui.Files)})
+	// Handle all the request with /static/ prefix.
+	mux.Get("/static/", fileServer)
 
 	return standardMiddleware.Then(mux)
 }
