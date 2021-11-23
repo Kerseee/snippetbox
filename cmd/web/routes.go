@@ -25,6 +25,7 @@ func (app *application) routes() http.Handler {
 	// Register handlers with the allowed method. The order of statement below MATTERS!
 	// Pat will match patterns in the order that these handler are registered.
 	mux.Get("/", dynamicMiddleware.ThenFunc(app.home))
+	mux.Get("/about", dynamicMiddleware.ThenFunc(app.about))
 	mux.Get("/snippet/create", authenticatedMiddleware.ThenFunc(app.createSnippetForm))
 	mux.Post("/snippet/create", authenticatedMiddleware.ThenFunc(app.createSnippet))
 	mux.Get("/snippet/:id", dynamicMiddleware.ThenFunc(app.showSnippet))

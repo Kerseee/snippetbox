@@ -50,8 +50,7 @@ func ping(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("OK"))
 }
 
-// home is a handler function which writes a byte slice containing
-// "Hello from Snippetbox" as the response body.
+// home is a handler function which renders the home page.
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	// Show the latest snippets in the database.
 	s, err := app.snippets.Latest()
@@ -64,6 +63,11 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	app.render(w, r, "home.page.tmpl", &templateData{
 		Snippets: s,
 	})
+}
+
+// about is a handler function which renders the about page.
+func (app *application) about(w http.ResponseWriter, r *http.Request) {
+	app.render(w, r, "about.page.tmpl", &templateData{})
 }
 
 // showSnippet is a handler function which shows a specific snippet.
