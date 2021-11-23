@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 	"strconv"
 
-
 	"kerseeeHuang.com/snippetbox/pkg/forms"
 	"kerseeeHuang.com/snippetbox/pkg/models"
 )
@@ -41,8 +40,8 @@ func (nfs neuteredFileSystem) Open(path string) (http.File, error) {
 		}
 	}
 
-	// If it is a valid file or a directory with an index file in it, then return 
-	// the file or the directory and let http.FileServer to handle it in the following process. 
+	// If it is a valid file or a directory with an index file in it, then return
+	// the file or the directory and let http.FileServer to handle it in the following process.
 	return f, nil
 }
 
@@ -132,7 +131,7 @@ func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 
 	// Add session data to show flash information.
 	app.session.Put(r, "flash", "Snippet successfully created!")
-	
+
 	http.Redirect(w, r, fmt.Sprintf("/snippet/%d", id), http.StatusSeeOther)
 }
 
@@ -165,7 +164,7 @@ func (app *application) signupUser(w http.ResponseWriter, r *http.Request) {
 		app.render(w, r, "signup.page.tmpl", &templateData{Form: form})
 		return
 	}
-	
+
 	// Create an user if it is valid. Otherwise redisplay the signup form.
 	err = app.users.Insert(form.Get("name"), form.Get("email"), form.Get("password"))
 	if err != nil {

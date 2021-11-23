@@ -7,20 +7,20 @@ import (
 
 func TestHumanDate(t *testing.T) {
 	// Initialize test cases
-	tests := []struct{
-		name	string
-		tm		time.Time
-		want	string
+	tests := []struct {
+		name string
+		tm   time.Time
+		want string
 	}{
 		{
-			name:	"UTC",
-			tm:		time.Date(2021, 11, 18, 16, 57, 0, 0, time.UTC),
-			want: 	"18 Nov 2021 at 16:57",
+			name: "UTC",
+			tm:   time.Date(2021, 11, 18, 16, 57, 0, 0, time.UTC),
+			want: "18 Nov 2021 at 16:57",
 		},
 		{
-			name:	"Empty",
-			tm:		time.Time{},
-			want:	"",
+			name: "Empty",
+			tm:   time.Time{},
+			want: "",
 		},
 	}
 

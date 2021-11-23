@@ -13,7 +13,7 @@ import (
 	"kerseeeHuang.com/snippetbox/pkg/models"
 	"kerseeeHuang.com/snippetbox/pkg/models/mysql"
 
-	_ "github.com/go-sql-driver/mysql"	// We don't explicit need this, but database/sql need this.
+	_ "github.com/go-sql-driver/mysql" // We don't explicit need this, but database/sql need this.
 	"github.com/golangcollege/sessions"
 )
 
@@ -23,26 +23,26 @@ const contextKeyIsAuthenticated = contextKey("isAuthenticated")
 
 // application holds all the application-wide dependencies.
 type application struct {
-	errorLog		*log.Logger
-	infoLog			*log.Logger
-	session 		*sessions.Session
-	
-	snippets		interface {
+	errorLog *log.Logger
+	infoLog  *log.Logger
+	session  *sessions.Session
+
+	snippets interface {
 		Insert(title, content, expires string) (int, error)
 		Get(id int) (*models.Snippet, error)
 		Latest() ([]*models.Snippet, error)
 	}
-	
-	templateCache 	map[string]*template.Template
-	
-	users			interface {
+
+	templateCache map[string]*template.Template
+
+	users interface {
 		Insert(name, email, password string) error
 		Authenticate(email, password string) (int, error)
 		Get(id int) (*models.User, error)
 	}
 }
 
-func main(){
+func main() {
 	// Parse the runtime configuration settings for the application.
 	// addr is a flag to set HTTP network address
 	addr := flag.String("addr", ":4000", "HTTP network address")
@@ -57,7 +57,7 @@ func main(){
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	// errorLog is a logger for writing error messages.
 	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
-	
+
 	// Open the DB.
 	db, err := openDB(*dsn)
 	if err != nil {
@@ -74,34 +74,34 @@ func main(){
 	// Initialize a session manager and set its lifetime.
 	session := sessions.New([]byte(*secret))
 	session.Lifetime = 12 * time.Hour
-	
+
 	// Initialize an application to hold all the dependencies and routes (mux).
 	app := &application{
-		errorLog: 		errorLog,
-		infoLog: 		infoLog,
-		session: 		session,
-		snippets: 		&mysql.SnippetModel{DB: db},
-		templateCache: 	templateCache,
-		users: 			&mysql.UserModel{DB: db},
+		errorLog:      errorLog,
+		infoLog:       infoLog,
+		session:       session,
+		snippets:      &mysql.SnippetModel{DB: db},
+		templateCache: templateCache,
+		users:         &mysql.UserModel{DB: db},
 	}
 
 	// Config the curve preferences in TLS.
 	tlsConfig := &tls.Config{
-		PreferServerCipherSuites: 	true,
-		CurvePreferences: 			[]tls.CurveID{tls.X25519, tls.CurveP256},
+		PreferServerCipherSuites: true,
+		CurvePreferences:         []tls.CurveID{tls.X25519, tls.CurveP256},
 	}
-	
+
 	// Running the HTTP server.
 	// Initialize the http server with addr, errorLog and handler defined above.
 	// Otherwise the http default server will use stderr to output error.
 	srv := &http.Server{
-		Addr: *addr,
-		ErrorLog: 		errorLog,
-		Handler: 		app.routes(),	// Create a mux from app.routes()
-		TLSConfig: 		tlsConfig,
-		IdleTimeout: 	time.Minute,
-		ReadTimeout: 	5 * time.Second,
-		WriteTimeout: 	10 * time.Second,
+		Addr:         *addr,
+		ErrorLog:     errorLog,
+		Handler:      app.routes(), // Create a mux from app.routes()
+		TLSConfig:    tlsConfig,
+		IdleTimeout:  time.Minute,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 10 * time.Second,
 	}
 	// Use the http.ListenAndServe() function to start a new web server.
 	// Call Fatal if there is any error.
@@ -120,7 +120,7 @@ func openDB(dsn string) (*sql.DB, error) {
 	}
 	// Thus we need db.Ping to test the connection to the db.
 	if err = db.Ping(); err != nil {
-		return nil , err
+		return nil, err
 	}
 	return db, nil
 }

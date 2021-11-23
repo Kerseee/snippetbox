@@ -10,13 +10,13 @@ import (
 func TestSecureHeaders(t *testing.T) {
 	// Initialize a new response recorder and a request
 	rr := httptest.NewRecorder()
-	r, err := http.NewRequest(http.MethodGet, "/", nil) 
+	r, err := http.NewRequest(http.MethodGet, "/", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	// Create a mock next handler to call after calling the middleware.
-	next := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){
+	next := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("OK"))
 	})
 
@@ -45,7 +45,7 @@ func TestSecureHeaders(t *testing.T) {
 		t.Errorf("want %d; got %d", http.StatusOK, rs.StatusCode)
 	}
 
-	// Check the response body. 
+	// Check the response body.
 	defer rs.Body.Close()
 	body, err := io.ReadAll(rs.Body)
 	if err != nil {

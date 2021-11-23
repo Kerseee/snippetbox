@@ -13,7 +13,7 @@ import (
 
 // UserModel is a wrapper of sql.db connection pool toward the users table in db.
 type UserModel struct {
-	DB	*sql.DB
+	DB *sql.DB
 }
 
 // Insert insert an user into db if given user info are all valid.

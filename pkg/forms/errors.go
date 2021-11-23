@@ -18,5 +18,3 @@ func (e errors) Get(field string) string {
 	}
 	return msgs[0]
 }
-
-

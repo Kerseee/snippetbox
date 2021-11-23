@@ -37,10 +37,10 @@ func TestShowSnippet(t *testing.T) {
 
 	// Create test cases.
 	tests := []struct {
-		name		string
-		urlPath		string
-		wantCode	int
-		wantBody	[]byte
+		name     string
+		urlPath  string
+		wantCode int
+		wantBody []byte
 	}{
 		{"Valid ID", "/snippet/1", http.StatusOK, []byte("An old silent pond...")},
 		{"Non-existent ID", "/snippet/2", http.StatusNotFound, nil},
@@ -52,9 +52,9 @@ func TestShowSnippet(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T){
+		t.Run(test.name, func(t *testing.T) {
 			code, _, body := ts.get(t, test.urlPath)
-			
+
 			if code != test.wantCode {
 				t.Errorf("want %d; got %d", test.wantCode, code)
 			}
@@ -76,29 +76,29 @@ func TestSignupUser(t *testing.T) {
 	_, _, body := ts.get(t, "/user/signup")
 	csrfToken := extractCSRFToken(t, body)
 
-	tests := []struct{
-		name			string
-		userName		string
-		userEmail		string
-		userPassword	string
-		csrfToken		string
-		wantCode		int
-		wantBody		[]byte
+	tests := []struct {
+		name         string
+		userName     string
+		userEmail    string
+		userPassword string
+		csrfToken    string
+		wantCode     int
+		wantBody     []byte
 	}{
 		{"Valid submission", "Bob", "bob@example.com", "validPa$$word", csrfToken, http.StatusSeeOther, nil},
-        {"Empty name", "", "bob@example.com", "validPa$$word", csrfToken, http.StatusOK, []byte("This field cannot be blank")},
-        {"Empty email", "Bob", "", "validPa$$word", csrfToken, http.StatusOK, []byte("This field cannot be blank")},
-        {"Empty password", "Bob", "bob@example.com", "", csrfToken, http.StatusOK, []byte("This field cannot be blank")},
-        {"Invalid email (incomplete domain)", "Bob", "bob@example.", "validPa$$word", csrfToken, http.StatusOK, []byte("This field is invalid")},
-        {"Invalid email (missing @)", "Bob", "bobexample.com", "validPa$$word", csrfToken, http.StatusOK, []byte("This field is invalid")},
-        {"Invalid email (missing local part)", "Bob", "@example.com", "validPa$$word", csrfToken, http.StatusOK, []byte("This field is invalid")},
-        {"Short password", "Bob", "bob@example.com", "pa$$word", csrfToken, http.StatusOK, []byte("This field is too short (minimum is 10 characters)")},
-        {"Duplicate email", "Bob", "dup@example.com", "validPa$$word", csrfToken, http.StatusOK, []byte("Email address is already in use")},
-        {"Invalid CSRF Token", "", "", "", "wrongToken", http.StatusBadRequest, nil},
+		{"Empty name", "", "bob@example.com", "validPa$$word", csrfToken, http.StatusOK, []byte("This field cannot be blank")},
+		{"Empty email", "Bob", "", "validPa$$word", csrfToken, http.StatusOK, []byte("This field cannot be blank")},
+		{"Empty password", "Bob", "bob@example.com", "", csrfToken, http.StatusOK, []byte("This field cannot be blank")},
+		{"Invalid email (incomplete domain)", "Bob", "bob@example.", "validPa$$word", csrfToken, http.StatusOK, []byte("This field is invalid")},
+		{"Invalid email (missing @)", "Bob", "bobexample.com", "validPa$$word", csrfToken, http.StatusOK, []byte("This field is invalid")},
+		{"Invalid email (missing local part)", "Bob", "@example.com", "validPa$$word", csrfToken, http.StatusOK, []byte("This field is invalid")},
+		{"Short password", "Bob", "bob@example.com", "pa$$word", csrfToken, http.StatusOK, []byte("This field is too short (minimum is 10 characters)")},
+		{"Duplicate email", "Bob", "dup@example.com", "validPa$$word", csrfToken, http.StatusOK, []byte("Email address is already in use")},
+		{"Invalid CSRF Token", "", "", "", "wrongToken", http.StatusBadRequest, nil},
 	}
 
-	for _, test := range tests{
-		t.Run(test.name, func(t *testing.T){
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
 			form := url.Values{}
 			form.Add("name", test.userName)
 			form.Add("email", test.userEmail)

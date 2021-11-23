@@ -14,17 +14,17 @@ type SnippetModel struct {
 
 // Insert inserts a new snippet into the database.
 func (m *SnippetModel) Insert(title, content, expires string) (int, error) {
-	// stmt is a statement of inserting data into the database. 
+	// stmt is a statement of inserting data into the database.
 	// '?'s are placeholder parameters.
 	stmt := `INSERT INTO snippets (title, content, created, expires)
 		VALUES(?, ?, UTC_TIMESTAMP(), DATE_ADD(UTC_TIMESTAMP(), INTERVAL ? DAY))`
-	
+
 	// Use DB.Exec() to execute the statement with placeholder parameters and get the result.
 	result, err := m.DB.Exec(stmt, title, content, expires)
 	if err != nil {
 		return 0, err
 	}
-	
+
 	// Get the id of snippet that we just insert.
 	id, err := result.LastInsertId()
 	if err != nil {
@@ -38,14 +38,14 @@ func (m *SnippetModel) Insert(title, content, expires string) (int, error) {
 func (m *SnippetModel) Get(id int) (*models.Snippet, error) {
 	stmt := `SELECT id, title, content, created, expires FROM snippets
 		WHERE expires > UTC_TIMESTAMP() AND id = ?`
-	
+
 	// Use DB.QueryRow to retreive the data.
 	row := m.DB.QueryRow(stmt, id)
 
 	// Initial a pointer to a new zeroed snippet struct
 	s := &models.Snippet{}
 
-	// Use row.Scan to copy the value in the row into s. 
+	// Use row.Scan to copy the value in the row into s.
 	// The number of arguments must be exactly the same as the number of columns
 	// returned by DB.QueryRow.
 	err := row.Scan(&s.ID, &s.Title, &s.Content, &s.Created, &s.Expires)
@@ -65,7 +65,7 @@ func (m *SnippetModel) Get(id int) (*models.Snippet, error) {
 func (m *SnippetModel) Latest() ([]*models.Snippet, error) {
 	stmt := `SELECT id, title, content, created, expires FROM snippets
 		WHERE expires > UTC_TIMESTAMP() ORDER BY created DESC LIMIT 10`
-	
+
 	rows, err := m.DB.Query(stmt)
 	if err != nil {
 		return nil, err
@@ -93,6 +93,6 @@ func (m *SnippetModel) Latest() ([]*models.Snippet, error) {
 	if err = rows.Err(); err != nil {
 		return nil, err
 	}
-	
+
 	return snippets, nil
 }

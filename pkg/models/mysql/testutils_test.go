@@ -37,4 +37,4 @@ func newTestDB(t *testing.T) (*sql.DB, func()) {
 
 		db.Close()
 	}
-} 
+}

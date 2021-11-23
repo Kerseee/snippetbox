@@ -7,7 +7,7 @@ import (
 
 	"github.com/bmizerany/pat"
 	"github.com/justinas/alice"
-)	
+)
 
 // routes return a http.Handler that routes all requests to corresponding handlers.
 func (app *application) routes() http.Handler {
@@ -19,7 +19,7 @@ func (app *application) routes() http.Handler {
 
 	// authenticatedMiddleware is a chan for pages needed user authentication
 	authenticatedMiddleware := dynamicMiddleware.Append(app.requireAuthentication)
-	
+
 	// Create a mux with third-party package.
 	mux := pat.New()
 	// Register handlers with the allowed method. The order of statement below MATTERS!

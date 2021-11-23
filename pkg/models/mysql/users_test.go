@@ -15,41 +15,41 @@ func TestUserModelGet(t *testing.T) {
 	}
 
 	// Create test cases.
-	tests := []struct{
-		name		string
-		userID		int
-		wantUser	*models.User
-		wantError	error
+	tests := []struct {
+		name      string
+		userID    int
+		wantUser  *models.User
+		wantError error
 	}{
 		{
-			name:		"Valid ID",
-			userID:		1,
-			wantUser:	&models.User {
-				ID:			1,
-				Name: 		"Alice Jones",
-				Email:		"alice@example.com",
-				Created:	time.Date(2021, 11, 21, 17, 8, 0, 0, time.UTC),
-				Active: 	true,
+			name:   "Valid ID",
+			userID: 1,
+			wantUser: &models.User{
+				ID:      1,
+				Name:    "Alice Jones",
+				Email:   "alice@example.com",
+				Created: time.Date(2021, 11, 21, 17, 8, 0, 0, time.UTC),
+				Active:  true,
 			},
 			wantError: nil,
 		},
 		{
-			name:		"Zero ID",
-			userID:		0,
-			wantUser: 	nil,
-			wantError: 	models.ErrNoRecord,
+			name:      "Zero ID",
+			userID:    0,
+			wantUser:  nil,
+			wantError: models.ErrNoRecord,
 		},
 		{
-			name:		"Non-existent ID",
-			userID:		2,
-			wantUser: 	nil,
-			wantError: 	models.ErrNoRecord,
+			name:      "Non-existent ID",
+			userID:    2,
+			wantUser:  nil,
+			wantError: models.ErrNoRecord,
 		},
 	}
 
 	// Run test cases.
 	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T){
+		t.Run(test.name, func(t *testing.T) {
 			// Initialize the connection poll to the test DB.
 			db, teardown := newTestDB(t)
 			defer teardown()

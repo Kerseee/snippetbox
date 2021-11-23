@@ -6,12 +6,12 @@ import (
 	"kerseeeHuang.com/snippetbox/pkg/models"
 )
 
-var mockUser = &models.User {
-	ID:			1,
-	Name:		"Alice",
-	Email:		"alice@example.com",
-	Created:	time.Now(),
-	Active: 	true,
+var mockUser = &models.User{
+	ID:      1,
+	Name:    "Alice",
+	Email:   "alice@example.com",
+	Created: time.Now(),
+	Active:  true,
 }
 
 type UserModel struct{}

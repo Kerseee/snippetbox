@@ -41,14 +41,14 @@ func newTestApplication(t *testing.T) *application {
 	session := sessions.New([]byte("3dSmsje8xh19sj38cnsl2i38Sja29Si2"))
 	session.Lifetime = 12 * time.Hour
 	session.Secure = true
-	
-	return &application {
-		errorLog: 	log.New(io.Discard, "", 0),
-		infoLog:	log.New(io.Discard, "", 0),
-		session: 	session,
-		snippets: 	&mock.SnippetModel{},
+
+	return &application{
+		errorLog:      log.New(io.Discard, "", 0),
+		infoLog:       log.New(io.Discard, "", 0),
+		session:       session,
+		snippets:      &mock.SnippetModel{},
 		templateCache: templateCache,
-		users: 		&mock.UserModel{},
+		users:         &mock.UserModel{},
 	}
 }
 
@@ -98,7 +98,7 @@ func (ts *testServer) get(t *testing.T, urlPath string) (int, http.Header, []byt
 
 // postForm sends POST request to a given url on the test server.
 func (ts *testServer) postForm(t *testing.T, urlPath string, form url.Values) (int, http.Header, []byte) {
-	rs, err := ts.Client().PostForm(ts.URL + urlPath, form)
+	rs, err := ts.Client().PostForm(ts.URL+urlPath, form)
 	if err != nil {
 		t.Fatal(err)
 	}

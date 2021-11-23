@@ -29,13 +29,13 @@ func (app *application) notFound(w http.ResponseWriter) {
 	app.clientError(w, http.StatusNotFound)
 }
 
-// addDefaultData adds the current year to the CurrentYear field, 
+// addDefaultData adds the current year to the CurrentYear field,
 // and return the pointer of the struct templateData.
 func (app *application) addDefaultData(td *templateData, r *http.Request) *templateData {
 	if td == nil {
 		td = &templateData{}
 	}
-	
+
 	td.CSRFToken = nosurf.Token(r)
 	td.CurrentYear = time.Now().Year()
 	td.Flash = app.session.PopString(r, "flash")

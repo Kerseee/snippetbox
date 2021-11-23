@@ -36,7 +36,7 @@ func (f *Form) Required(fields ...string) {
 	}
 }
 
-// MaxLength check if the length of character in the value of given field in the form 
+// MaxLength check if the length of character in the value of given field in the form
 // not exceed given number d. If it fails then add an error message into f.Errors.
 func (f *Form) MaxLength(field string, d int) {
 	value := f.Get(field)
@@ -63,7 +63,7 @@ func (f *Form) PermittedValues(field string, opts ...string) {
 	f.Errors.Add(field, "This field is invalid")
 }
 
-// MaxLength check if the length of character in the value of given field in the form 
+// MaxLength check if the length of character in the value of given field in the form
 // not below given number d. If it fails then add an error message into f.Errors.
 func (f *Form) MinLength(field string, d int) {
 	value := f.Get(field)

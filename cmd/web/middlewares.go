@@ -13,7 +13,7 @@ import (
 
 // secureHeaders is a middleware that adds security measures for all requests.
 func secureHeaders(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("X-XSS-Protection", "1; mode-block")
 		w.Header().Set("X-Frame-Options", "deny")
 
@@ -23,7 +23,7 @@ func secureHeaders(next http.Handler) http.Handler {
 
 // logRequest is a middleware that write requests information to infoLog.
 func (app *application) logRequest(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		app.infoLog.Printf("%s - %s %s %s", r.RemoteAddr, r.Proto, r.Method, r.URL.RequestURI())
 
 		next.ServeHTTP(w, r)
@@ -32,7 +32,7 @@ func (app *application) logRequest(next http.Handler) http.Handler {
 
 // recoverPanic is a middleware that recover the handler from panic
 func (app *application) recoverPanic(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Recover from the panic if there is any
 		defer func() {
 			if err := recover(); err != nil {
@@ -49,14 +49,14 @@ func (app *application) recoverPanic(next http.Handler) http.Handler {
 
 // requireAuthentication is a middleware that redirects unauthenticated user to the login page.
 func (app *application) requireAuthentication(next http.Handler) http.Handler {
-	return http.HandlerFunc(func (w http.ResponseWriter, r *http.Request){
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Redirect unauthenticated user to the login page and return from the middleware chain.
 		if !app.isAuthenticated(r) {
 			http.Redirect(w, r, "/", http.StatusSeeOther)
 			return
 		}
 
-		// Prevent user's browser from caching pages that require authentication. 
+		// Prevent user's browser from caching pages that require authentication.
 		w.Header().Add("Cache-Control", "no-store")
 
 		// Move on the next handler
@@ -68,19 +68,19 @@ func (app *application) requireAuthentication(next http.Handler) http.Handler {
 func noSurf(next http.Handler) http.Handler {
 	csrfHandler := nosurf.New(next)
 	csrfHandler.SetBaseCookie(http.Cookie{
-		HttpOnly:	true,
-		Path:		"/",
-		Secure:		true,
+		HttpOnly: true,
+		Path:     "/",
+		Secure:   true,
 	})
-	
+
 	return csrfHandler
 }
 
-// authenticate is a middleware that create a copy of the request context with 
+// authenticate is a middleware that create a copy of the request context with
 // authenticated key and pass the copy to the next handler if the current user
 // is authenticated and active. Otherwise directly move on to the next handler.
 func (app *application) authenticate(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Check if current user is authenticated.
 		exist := app.session.Exists(r, "authenticatedUserID")
 		if !exist {
@@ -107,7 +107,7 @@ func (app *application) authenticate(next http.Handler) http.Handler {
 			return
 		}
 
-		// Mark the request from this user so that the request indicates it is from an 
+		// Mark the request from this user so that the request indicates it is from an
 		// authenticated and active user.
 		ctx := context.WithValue(r.Context(), contextKeyIsAuthenticated, true)
 		next.ServeHTTP(w, r.WithContext(ctx))
