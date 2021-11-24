@@ -39,6 +39,7 @@ type application struct {
 		Insert(name, email, password string) error
 		Authenticate(email, password string) (int, error)
 		Get(id int) (*models.User, error)
+		ChangePassword(id int, currentPassword, newPassword string) error
 	}
 }
 

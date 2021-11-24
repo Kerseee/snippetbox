@@ -231,3 +231,71 @@ func (app *application) logoutUser(w http.ResponseWriter, r *http.Request) {
 	// Redirect to home page.
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
+
+// userProfile show the profile of given user.
+func (app*application) userProfile(w http.ResponseWriter, r *http.Request) {
+	// Get the id of the authenticated user.
+	id := app.session.GetInt(r, "authenticatedUserID")
+	
+	// Retreive the data from db.
+	user, err := app.users.Get(id)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	// Show the user profile.
+	app.render(w, r, "profile.page.tmpl", &templateData{
+		User: user,
+	})
+}
+
+// changePasswordForm show the form for users to change their passwords.
+func (app *application) changePasswordForm(w http.ResponseWriter, r *http.Request) {
+	app.render(w, r, "password.page.tmpl", &templateData{
+		Form:	forms.New(nil),
+	})
+}
+
+// changePassword change the password of the user and redirect to the profile if success.
+func (app *application) changePassword(w http.ResponseWriter, r *http.Request) {
+	// Parse the form data.
+	err := r.ParseForm()
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+
+	// Validate the data.
+	form := forms.New(r.PostForm)
+	form.Required("currentPassword", "newPassword", "confirmPassword")
+	form.MinLength("newPassword", 10)
+	
+	// Confirm password.
+	if form.Get("newPassword") != form.Get("confirmPassword") {
+		form.Errors.Add("confirmPassword", "Password do not match")
+	}
+
+	// Redisplay the template and filled-in data if the form is not valid.
+	if !form.Valid() {
+		app.render(w, r, "password.page.tmpl", &templateData{Form: form})
+		return
+	}
+
+	// Update the password of this user.
+	id := app.session.GetInt(r, "authenticatedUserID")
+	err = app.users.ChangePassword(id, form.Get("currentPassword"), form.Get("newPassword"))
+	if err != nil {
+		if errors.Is(err, models.ErrInvalidCredentials) {
+			form.Errors.Add("currentPassword", "Wrong password")
+			app.render(w, r, "password.page.tmpl", &templateData{Form: form})
+		} else {
+			app.serverError(w, err)
+		}
+		return
+	}
+
+	// Add a confirmation flash message and redirect to the login page.
+	app.session.Put(r, "flash", "Change password successfully!")
+	http.Redirect(w, r, "/user/profile", http.StatusSeeOther)
+}

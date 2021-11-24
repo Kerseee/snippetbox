@@ -36,6 +36,9 @@ func (app *application) routes() http.Handler {
 	mux.Get("/user/login", dynamicMiddleware.ThenFunc(app.loginUserForm))
 	mux.Post("/user/login", dynamicMiddleware.ThenFunc(app.loginUser))
 	mux.Post("/user/logout", authenticatedMiddleware.ThenFunc(app.logoutUser))
+	mux.Get("/user/profile", authenticatedMiddleware.ThenFunc(app.userProfile))
+	mux.Get("/user/change-password", authenticatedMiddleware.ThenFunc(app.changePasswordForm))
+	mux.Post("/user/change-password", authenticatedMiddleware.ThenFunc(app.changePassword))
 
 	// Add ping just for test.
 	mux.Get("/ping", http.HandlerFunc(ping))
