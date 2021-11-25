@@ -23,8 +23,10 @@ const contextKeyIsAuthenticated = contextKey("isAuthenticated")
 
 // application holds all the application-wide dependencies.
 type application struct {
+	debug	 bool
 	errorLog *log.Logger
 	infoLog  *log.Logger
+	
 	session  *sessions.Session
 
 	snippets interface {
@@ -51,6 +53,8 @@ func main() {
 	dsn := flag.String("dsn", "web:satoshi7442@/snippetbox?parseTime=true", "MySQL data source name")
 	// secret is a flag to set the encrption key and will be used to authenticate session cookies
 	secret := flag.String("secret", "s6Ndh+pPbnzHbS*+9Pk8qGwhTzbpa@ge", "Secret key")
+	// debug is a flag to set if it is in debug mode.
+	debug := flag.Bool("debug", false, "Set true for debug mode")
 	flag.Parse()
 
 	// Establishing the dependencies for the handlers
@@ -78,6 +82,7 @@ func main() {
 
 	// Initialize an application to hold all the dependencies and routes (mux).
 	app := &application{
+		debug: 		   *debug,
 		errorLog:      errorLog,
 		infoLog:       infoLog,
 		session:       session,

@@ -16,6 +16,13 @@ func (app *application) serverError(w http.ResponseWriter, err error) {
 	trace := fmt.Sprintf("%s\n%s", err.Error(), debug.Stack())
 	app.errorLog.Output(2, trace)
 
+	// Render all error messages and stack trace into a HTTP response if debug mode is set.
+	if app.debug {
+		http.Error(w, trace, http.StatusInternalServerError)
+		return
+	}
+
+	// Send generic error message as default.
 	http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 }
 
