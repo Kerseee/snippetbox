@@ -218,7 +218,14 @@ func (app *application) loginUser(w http.ResponseWriter, r *http.Request) {
 	// Add the user id to the session, so that this user is logged in.
 	app.session.Put(r, "authenticatedUserID", id)
 
-	// Redirect the user to the create snippet page.
+	// Redirect to the origin path that this client want to before login, if exist.
+	redirectLoc := app.session.PopString(r, "redirectLocation")
+	if redirectLoc != "" {
+		http.Redirect(w, r, redirectLoc, http.StatusSeeOther)
+		return
+	}
+
+	// Redirect the user to the create snippet page as default.
 	http.Redirect(w, r, "/snippet/create", http.StatusSeeOther)
 }
 

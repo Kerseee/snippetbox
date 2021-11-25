@@ -50,8 +50,10 @@ func (app *application) recoverPanic(next http.Handler) http.Handler {
 // requireAuthentication is a middleware that redirects unauthenticated user to the login page.
 func (app *application) requireAuthentication(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Redirect unauthenticated user to the login page and return from the middleware chain.
+		// Redirect unauthenticated user to the login page and 
+		// store the origin request url path into session.
 		if !app.isAuthenticated(r) {
+			app.session.Put(r, "redirectLocation", r.URL.Path)
 			http.Redirect(w, r, "/user/login", http.StatusSeeOther)
 			return
 		}
