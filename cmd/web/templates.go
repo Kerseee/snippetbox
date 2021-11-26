@@ -20,7 +20,7 @@ type templateData struct {
 	IsAuthenticated bool
 	Snippet         *models.Snippet
 	Snippets        []*models.Snippet
-	User 			*models.User
+	User            *models.User
 }
 
 // humanDate return a nicely formatted string of time.

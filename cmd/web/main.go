@@ -23,11 +23,11 @@ const contextKeyIsAuthenticated = contextKey("isAuthenticated")
 
 // application holds all the application-wide dependencies.
 type application struct {
-	debug	 bool
+	debug    bool
 	errorLog *log.Logger
 	infoLog  *log.Logger
-	
-	session  *sessions.Session
+
+	session *sessions.Session
 
 	snippets interface {
 		Insert(title, content, expires string) (int, error)
@@ -82,7 +82,7 @@ func main() {
 
 	// Initialize an application to hold all the dependencies and routes (mux).
 	app := &application{
-		debug: 		   *debug,
+		debug:         *debug,
 		errorLog:      errorLog,
 		infoLog:       infoLog,
 		session:       session,

@@ -118,7 +118,6 @@ func TestSignupUser(t *testing.T) {
 	}
 }
 
-
 func TestCreateSnippetForm(t *testing.T) {
 	// Initialize test app and server.
 	app := newTestApplication(t)
@@ -126,7 +125,7 @@ func TestCreateSnippetForm(t *testing.T) {
 	defer ts.Close()
 
 	// Test unauthenticated user.
-	t.Run("Unauthenticated", func(t *testing.T){
+	t.Run("Unauthenticated", func(t *testing.T) {
 		wantCode := http.StatusSeeOther
 		wantLocInHeader := "/user/login"
 		code, headers, _ := ts.get(t, "/snippet/create")
@@ -139,7 +138,7 @@ func TestCreateSnippetForm(t *testing.T) {
 	})
 
 	// Test authenticated user.
-	t.Run("Authenticated", func(t *testing.T){
+	t.Run("Authenticated", func(t *testing.T) {
 		// Mock a client making a GET request to "/user/login" and extract the csrfToken.
 		_, _, body := ts.get(t, "/user/login")
 		csrfToken := extractCSRFToken(t, body)

@@ -240,10 +240,10 @@ func (app *application) logoutUser(w http.ResponseWriter, r *http.Request) {
 }
 
 // userProfile show the profile of given user.
-func (app*application) userProfile(w http.ResponseWriter, r *http.Request) {
+func (app *application) userProfile(w http.ResponseWriter, r *http.Request) {
 	// Get the id of the authenticated user.
 	id := app.session.GetInt(r, "authenticatedUserID")
-	
+
 	// Retreive the data from db.
 	user, err := app.users.Get(id)
 	if err != nil {
@@ -260,7 +260,7 @@ func (app*application) userProfile(w http.ResponseWriter, r *http.Request) {
 // changePasswordForm show the form for users to change their passwords.
 func (app *application) changePasswordForm(w http.ResponseWriter, r *http.Request) {
 	app.render(w, r, "password.page.tmpl", &templateData{
-		Form:	forms.New(nil),
+		Form: forms.New(nil),
 	})
 }
 
@@ -277,7 +277,7 @@ func (app *application) changePassword(w http.ResponseWriter, r *http.Request) {
 	form := forms.New(r.PostForm)
 	form.Required("currentPassword", "newPassword", "confirmPassword")
 	form.MinLength("newPassword", 10)
-	
+
 	// Confirm password.
 	if form.Get("newPassword") != form.Get("confirmPassword") {
 		form.Errors.Add("confirmPassword", "Password do not match")

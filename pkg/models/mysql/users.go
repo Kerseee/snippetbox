@@ -116,7 +116,7 @@ func (m *UserModel) ChangePassword(id int, currentPassword, newPassword string) 
 	if err != nil {
 		return err
 	}
-	
+
 	// Update the password to newPassword.
 	stmt = `UPDATE users SET hashed_password = ? WHERE id = ?`
 	_, err = m.DB.Exec(stmt, string(newHashedPassword), id)
